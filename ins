@@ -1,0 +1,15 @@
+a modifier that receives a reference to an std::ostream object. 
+
+If there is a customer order on the back of the queue of orders waiting to be filled, this function moves it to the starting station on the line 
+
+and then executes one step of the assembly process at all stations on the line. 
+
+In the first part of that step, this function fills a customer order with one item at each station. 
+
+The second part of the step moves the orders that are ready to be moved from each station. 
+
+If a station has an order to move, the current object moves that order to the next station. 
+
+If the order to be moved is at the last station, this function moves it to the back of either the completed orders queue or the incomplete orders queue. 
+
+This function returns true if all the orders have been processed; false otherwise.
