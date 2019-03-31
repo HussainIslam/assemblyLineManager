@@ -16,6 +16,7 @@ Date: 12 March 2019
 namespace sict {
   class LineManager {
     std::vector<Station*> stations{};
+    std::vector<size_t> assemblyLine{};
     std::deque<CustomerOrder> waitingQueue{};
     std::deque<CustomerOrder> completed{};
     std::deque<CustomerOrder> incomplete{};
