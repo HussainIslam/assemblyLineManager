@@ -7,32 +7,38 @@ Date: 12 March 2019
 ****************************************/
 #include "LineManager.h"
 namespace sict {
+  // construstor for the LineManager object that creates a lineManager from the 
+  // data that has been passed to it. This replicates the information to data members
   LineManager::LineManager(std::vector<Station*>& station, std::vector<size_t>& indexNextStation, std::vector<CustomerOrder>& order, size_t indexStartingStation, std::ostream& os) {
-    
+    //copies the addresses of the stations to data members of the object
     stations.resize(station.size());
     for (size_t i = 0; i < station.size(); i++) {
       stations.at(i) = station.at(i);
     }
+    //this moves the orders to the waitingQueue
     for (size_t i = 0; i < order.size(); i++) {
       waitingQueue.push_back(std::move(order.at(i)));
     }
-    assemblyLine.resize(stations.size());
-    for (size_t i = 0; i < station.size(); i++) {
-      if (i == 0) { 
-        assemblyLine.at(i) = indexStartingStation; 
-      }
-      else { 
-        assemblyLine.at(i) = indexNextStation.at(i - 1); 
-      }
+    //copies the argument that stores the index number of the first station
+    firstStation = indexStartingStation;
+    //resizes the nextStation data member to hold all
+    //the index numbers of the subsequent stations
+    nextStations.resize(indexNextStation.size());
+    //copies the index numbers of the next stations to data member
+    for (size_t i = 0; i < nextStations.size(); i++) {
+      nextStations.at(i) = indexNextStation.at(i);
     }
-    
-    /*for (auto& i : order) { waitingQueue.push_back(std::move(i)); }
-    stations.resize(station.size());
-    size_t index = indexStartingStation;
-    for (size_t i = 0; i < station.size() && index != station.size(); i++) {
-      stations[i] = station[index];
-      index = indexNextStation[index];
+    //determines the index number of the last station in the lineManager
+    lastStation = firstStation;
+    while (lastStation != stations.size()) {
+      lastStation = nextStations.at(lastStation);
+    }
+    /*assemblyLine.resize(stations.size());
+    for (size_t i = 0; i < station.size(); i++) {
+      if (i == 0) { assemblyLine.at(i) = indexStartingStation; }
+      else { assemblyLine.at(i) = indexNextStation.at(assemblyLine.at(i-1)); }
     }*/
+    
   }
 
   void LineManager::display(std::ostream& os) const {
@@ -43,30 +49,44 @@ namespace sict {
   }
 
   bool LineManager::run(std::ostream& os) {
-    if (!waitingQueue.empty()) {
-      *(stations.at(assemblyLine.at(0))) += std::move(waitingQueue.back());
-    }
-    for (size_t i = 0; i < stations.size(); i++) {
-      stations.at(i)->fill(os);
-    }
-    for (size_t i = 0; i < stations.size(); i++) {
-      if (stations.at(assemblyLine.at(i))->hasAnOrderToRelease()) {
-        if (assemblyLine.at(i) != stations.size()) {
-          stations.at(assemblyLine.at(i + 1)) = std::move(stations.at(assemblyLine.at(i)));
-        }
-        else {
-          CustomerOrder temp{};
-          stations.at(assemblyLine.at(i))->pop(temp);
-          if (temp.isFilled()) {
-            completed.push_back(std::move(temp));
+    bool allProcessed{ false };
+    size_t numberOfOrders{ waitingQueue.size() };
+    while (!waitingQueue.empty()) {
+      if (!waitingQueue.empty()) {
+        *(stations.at(firstStation)) += std::move(waitingQueue.front());
+        waitingQueue.pop_front();
+      }
+      for (size_t i = 0; i < stations.size(); i++) {
+        stations.at(i)->fill(os);
+      }
+      size_t index = firstStation;
+      CustomerOrder temp{};
+      while (index != stations.size()) {
+        stations.at(index)->pop(temp);
+        if (temp.isItemFilled(stations.at(index)->getName())) {
+          if (index == lastStation) {
+            if (temp.isFilled()) {
+              completed.push_back(std::move(temp));
+            }
+            else {
+              incomplete.push_back(std::move(temp));
+            }
           }
           else {
-            incomplete.push_back(std::move(temp));
+            index = nextStations.at(index);
+            *(stations.at(index)) += std::move(temp);
           }
+        }
+        else {
+          index = nextStations.at(index);
         }
       }
     }
-    return true;
+    if (completed.size() + incomplete.size() == numberOfOrders) {
+      allProcessed = true;
+    }
+    
+    return allProcessed;
 
 
     //  bool allProcessed{ false };
