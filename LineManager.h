@@ -2,8 +2,8 @@
 Name: Md. Hussainul Islam Sajib
 Email: mhisajib@myseneca.ca
 Id: 137651170
-Assignment: Project - Milestone 2
-Date: 12 March 2019
+Assignment: Project - Milestone 3
+Date: 31 March 2019
 ****************************************/
 #ifndef SICT_LINE_MANAGER_H
 #define SICT_LINE_MANAGER_H
@@ -14,6 +14,9 @@ Date: 12 March 2019
 #include "CustomerOrder.h"
 
 namespace sict {
+  //declaring the class LineManager
+  //The definition of the member functions are in the
+  //LineManager.cpp file
   class LineManager {
     std::vector<Station*> stations{};
     std::vector<size_t> assemblyLine{};

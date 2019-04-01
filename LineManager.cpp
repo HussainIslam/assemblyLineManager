@@ -2,13 +2,14 @@
 Name: Md. Hussainul Islam Sajib
 Email: mhisajib@myseneca.ca
 Id: 137651170
-Assignment: Project - Milestone 2
-Date: 12 March 2019
+Assignment: Project - Milestone 3
+Date: 31 March 2019
 ****************************************/
 #include "LineManager.h"
 namespace sict {
   // construstor for the LineManager object that creates a lineManager from the 
   // data that has been passed to it. This replicates the information to data members
+  // Also determines the last station in the lineManager and store it in a data member
   LineManager::LineManager(std::vector<Station*>& station, std::vector<size_t>& indexNextStation, std::vector<CustomerOrder>& order, size_t indexStartingStation, std::ostream& os) {
     //copies the addresses of the stations to data members of the object
     stations.resize(station.size());
@@ -35,6 +36,7 @@ namespace sict {
     }
   }
 
+  //displays all the orders, both complete and incomplete
   void LineManager::display(std::ostream& os) const {
     os << "COMPLETED ORDERS" << std::endl;
     for (auto& i : completed) { i.display(os, true); }
@@ -42,7 +44,12 @@ namespace sict {
     os << "INCOMPLETE ORDERS" << std::endl;
     for (auto& i : incomplete) { i.display(os, true); }
   }
-
+  
+  //runs the lineManager, fills up the orders in the queue,
+  //moves the filled/unfilled orders to the next stations,
+  //and moves each order to either completed or incomplete deque.
+  //Finally, check whether all the orders have been processed or not
+  //return boolean value accordingly.
   bool LineManager::run(std::ostream& os) {
     bool allProcessed{ false };
     size_t numberOfOrders{ waitingQueue.size() };
@@ -61,6 +68,11 @@ namespace sict {
       for (size_t i = 0; i < stations.size(); i++) {
         stations.at(i)->fill(os);
       }
+      //checking each order in each of the stations,
+      //and moving the orders to appropriate places.
+      //If the order is not at the last station, move it to the next one,
+      //if the order is at the last station, move it to either completed
+      //or incomplete deque according to its filled status
       size_t index = firstStation;
       CustomerOrder temp{};
       for (size_t i = 0; i < stations.size(); i++) {
@@ -93,10 +105,11 @@ namespace sict {
         }       //end of if(stations.at(index)->hasAnOrderToRelease())
       }
     }
+    //checks whether there is any order left to be processed
+    //if not assign true to allProcessed flag
     if (!numberOfOrders) {
       allProcessed = true;
     }
     return allProcessed;
-
   }
 }

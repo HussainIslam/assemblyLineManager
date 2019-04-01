@@ -2,8 +2,8 @@
 Name: Md. Hussainul Islam Sajib
 Email: mhisajib@myseneca.ca
 Id: 137651170
-Assignment: Project - Milestone 2
-Date: 12 March 2019
+Assignment: Project - Milestone 3
+Date: 31 March 2019
 ****************************************/
 
 #include <iostream>
@@ -12,7 +12,7 @@ Date: 12 March 2019
 #include "Utilities.h"
 
 namespace sict {
-  //extracts token from string and stores in ItemSet
+  //extracts token from string and stores in data members of itemSet
   ItemSet::ItemSet(const std::string& src) {
     size_t next_pos{ 0 };
     name = utility.extractToken(src,next_pos);
@@ -29,7 +29,8 @@ namespace sict {
       description = utility.extractToken(src, next_pos);
     }
   }
-  //move constructor
+  
+  //move constructor of ItemSet class
   ItemSet::ItemSet(ItemSet&& src) {
     name = src.name;
     serialNumber = src.serialNumber;
@@ -39,18 +40,24 @@ namespace sict {
     src.serialNumber = 0;
     src.quantity = 0;
   }
+
   //returns the name of the item
   const std::string& ItemSet::getName() const { return name; }
+  
   //returns serial number of item
   const unsigned int ItemSet::getSerialNumber() const { return serialNumber; }
-  //returns quantity
+  
+  //returns quantity of a product
   const unsigned int ItemSet::getQuantity() const { return quantity; }
-  //reduces the quantity
+  
+  //reduces the quantity by 1 and increases the serial number by 1
   ItemSet& ItemSet::operator--() {
     quantity--; serialNumber++;
     return *this;
   }
-  //displays item set
+
+  //displays ItemSet object to the standard output with formatting
+  //based on whether to display full details or not
   void ItemSet::display(std::ostream& os, bool full) const {
     if (full) {
       os.width(utility.getFieldWidth());
@@ -81,8 +88,5 @@ namespace sict {
       os << serialNumber + 1 << ']';
       os << std::endl;
     }
-    
-
   }
-
 }

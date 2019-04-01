@@ -1,15 +1,19 @@
-  /***************************************
-  Name: Md. Hussainul Islam Sajib
-  Email: mhisajib@myseneca.ca
-  Id: 137651170
-  Assignment: Project - Milestone 2
-  Date: 12 March 2019
-  ****************************************/
+/***************************************
+Name: Md. Hussainul Islam Sajib
+Email: mhisajib@myseneca.ca
+Id: 137651170
+Assignment: Project - Milestone 3
+Date: 31 March 2019
+****************************************/
 #include "CustomerOrder.h"
 
 namespace sict {
+  //default constructor for CustomerOrder class
   CustomerOrder::CustomerOrder() {}
 
+  //extracts tokes from strings passed to it and stores in 
+  //respective data members. This constructor also sets the
+  //value of the next position in the source string
   CustomerOrder::CustomerOrder(const std::string& sourceStr) {
     size_t next_pos{ 0 };
     customerName = utilities.extractToken(sourceStr, next_pos);
@@ -31,12 +35,17 @@ namespace sict {
     }
   }
 
+  //Move constructor for the CustomerOrder class
   CustomerOrder::CustomerOrder(CustomerOrder&& src) { 
     if (this != &src) { *this = std::move(src); }
   }
 
+  //Destructor for the CustomerOrder class
   CustomerOrder::~CustomerOrder() { delete[]itemArray; }
 
+  //Fills the orders with the itemSet passed to it
+  //and displays whether the particular item of the order
+  //has been filled or not.
   void CustomerOrder::fillItem(ItemSet& item, std::ostream& os) {
     for (size_t i = 0; i < numOfItem; i++) {
       if (item.getName() == itemArray[i].itemName) {
@@ -56,6 +65,8 @@ namespace sict {
     }
   }
 
+  //returns boolean value of whether all the orders 
+  //has been filled or not
   bool CustomerOrder::isFilled() const {
     int allFilled{ 1 };
     for (size_t i = 0; i < numOfItem; i++) {
@@ -64,6 +75,7 @@ namespace sict {
     return static_cast<bool>(allFilled);
   }
 
+  //returns boolean value of whether a particular item has been filled
   bool CustomerOrder::isItemFilled(const std::string& item) const {
     int allFilled{ 1 };
     for (size_t i = 0; i < numOfItem; i++) {
@@ -74,11 +86,14 @@ namespace sict {
     return static_cast<bool>(allFilled);
   }
 
+  //returns the name of the custoemr and the product as string
   std::string CustomerOrder::getNameProduct() const {
     std::string nameProduct = customerName + " [" + productName + ']';
     return nameProduct;
   }
 
+  //displays to the standard output the details of the order based on
+  //whether to display details of the order or not
   void CustomerOrder::display(std::ostream& os, bool showDetail) const {
     if (!showDetail) {
       os.width(utilities.getFieldWidth());
@@ -105,6 +120,7 @@ namespace sict {
     }
   }
 
+  //Move assignment operator for the CustomerOrder objects
   CustomerOrder& CustomerOrder::operator=(CustomerOrder&& src) {
     if (this != &src) {
       delete[] itemArray;
