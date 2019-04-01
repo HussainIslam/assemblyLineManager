@@ -33,12 +33,6 @@ namespace sict {
     while (lastStation != stations.size()) {
       lastStation = nextStations.at(lastStation);
     }
-    /*assemblyLine.resize(stations.size());
-    for (size_t i = 0; i < station.size(); i++) {
-      if (i == 0) { assemblyLine.at(i) = indexStartingStation; }
-      else { assemblyLine.at(i) = indexNextStation.at(assemblyLine.at(i-1)); }
-    }*/
-    
   }
 
   void LineManager::display(std::ostream& os) const {
@@ -51,35 +45,43 @@ namespace sict {
   bool LineManager::run(std::ostream& os) {
     bool allProcessed{ false };
     size_t numberOfOrders{ waitingQueue.size() };
+    //run this loop until the waitingQueue is empty
     while (!waitingQueue.empty()) {
+      //if the waitingQueue is not empty move one item from the
+      //front of the waitingQueue to the first station on line
       if (!waitingQueue.empty()) {
         *(stations.at(firstStation)) += std::move(waitingQueue.front());
         waitingQueue.pop_front();
       }
+      //filling the orders in each of the stations
       for (size_t i = 0; i < stations.size(); i++) {
         stations.at(i)->fill(os);
       }
       size_t index = firstStation;
       CustomerOrder temp{};
-      while (index != stations.size()) {
-        stations.at(index)->pop(temp);
-        if (temp.isItemFilled(stations.at(index)->getName())) {
-          if (index == lastStation) {
+      for (size_t i = 0; i < stations.size(); i++) {
+        if (stations.at(i)->hasAnOrderToRelease()) {
+          stations.at(i)->pop(temp);
+          if (i != lastStation) {
+            std::string past{stations.at(i)->getName()};
+            index = nextStations.at(i);
+            std::string next{ stations.at(index)->getName() };
+            std::string nameProduct{ temp.getNameProduct() };
+            *(stations.at(index)) += std::move(temp);
+            os << " --> " << nameProduct << " moved from " << past << " to " << next << std::endl;
+          }     //end of if(index != lastStation)
+          else {
             if (temp.isFilled()) {
               completed.push_back(std::move(temp));
-            }
+            }     //end of if(temp.isFilled())
             else {
               incomplete.push_back(std::move(temp));
-            }
-          }
-          else {
-            index = nextStations.at(index);
-            *(stations.at(index)) += std::move(temp);
-          }
-        }
-        else {
+            }     //end of else(temp.isFilled())
+          }     //end of else (index != lastStation)
+        }       //end of if(stations.at(index)->hasAnOrderToRelease())
+        /*else {
           index = nextStations.at(index);
-        }
+        }*/
       }
     }
     if (completed.size() + incomplete.size() == numberOfOrders) {
@@ -88,66 +90,5 @@ namespace sict {
     
     return allProcessed;
 
-
-    //  bool allProcessed{ false };
-    //  size_t noItemInProcess{ 0 };
-    //  //loop until the waitingQueue
-    //  while (!waitingQueue.empty()) {
-    //    //if (!waitingQueue.empty()) {
-    //      *(stations.at(0)) += std::move(waitingQueue.front());
-    //      waitingQueue.pop_front();
-    //      ++noItemInProcess;
-    //    //}
-    //    for (size_t i = 0; i < noItemInProcess; i++) {
-    //      stations.at(i)->fill(os);
-    //    }
-    //    for (size_t i = 0; i < noItemInProcess; i++) {
-    //      CustomerOrder temp{};
-    //      if (i == stations.size() - 1) {
-    //        stations.at(i)->pop(temp);
-    //        if (stations.at(i)->hasAnOrderToRelease()) {
-    //          completed.push_back(std::move(temp));
-    //        }
-    //        else {
-    //          incomplete.push_back(std::move(temp));
-    //        }
-    //      }
-    //      else {
-    //        stations.at(i)->pop(temp);
-    //        *(stations.at(i + 1)) += std::move(temp);
-    //      }
-    //      
-    //    }
-    //  }
-    //  
-    //  size_t extraStations{ stations.size() - noItemInProcess };
-    //  while (noItemInProcess) {
-    //    for (size_t i = extraStations; i < (noItemInProcess + extraStations); i++) {
-    //      stations.at( i )->fill(os);
-    //    }
-    //    for (size_t i = extraStations; i < (noItemInProcess + extraStations); i++) {
-    //      CustomerOrder temp{};
-    //      if (i == stations.size() - 1) {
-    //        stations.at(i)->pop(temp);
-    //        if (stations.at(i)->hasAnOrderToRelease()) {
-    //          completed.push_front(std::move(temp));
-    //        }
-    //        else {
-    //          incomplete.push_front(std::move(temp));
-    //        }
-    //      }
-    //      else {
-    //        stations.at(i)->pop(temp);
-    //        *(stations.at(i + 1)) += std::move(temp);
-    //      }
-    //    }
-
-    //    noItemInProcess--;
-    //  }
-    //  
-    //  allProcessed = true;
-    //  
-    //  return allProcessed;
-    //}
-    }
+  }
 }

@@ -25,7 +25,12 @@ namespace sict {
   bool Station::hasAnOrderToRelease() const {
     bool releaseState{ false };
     if (!orders.empty()) {
-      releaseState = orders.front().isFilled();
+      if (!item.getQuantity()) {
+        releaseState = true;
+      }
+      else {
+        releaseState = orders.front().isItemFilled(stationName);
+      }
     }
     return releaseState;
   }
@@ -44,8 +49,8 @@ namespace sict {
     bool filled{ false };
     if (!orders.empty()) {
       filled = orders.front().isItemFilled(stationName);
-      ready = std::move(orders.back());
-      orders.pop_back();
+      ready = std::move(orders.front());
+      orders.pop_front();
     }
     return filled;
   }
