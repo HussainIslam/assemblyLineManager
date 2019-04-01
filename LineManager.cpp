@@ -30,7 +30,7 @@ namespace sict {
     }
     //determines the index number of the last station in the lineManager
     lastStation = firstStation;
-    while (lastStation != stations.size()) {
+    while (nextStations.at(lastStation) != stations.size()) {
       lastStation = nextStations.at(lastStation);
     }
   }
@@ -38,6 +38,7 @@ namespace sict {
   void LineManager::display(std::ostream& os) const {
     os << "COMPLETED ORDERS" << std::endl;
     for (auto& i : completed) { i.display(os, true); }
+    os << std::endl;
     os << "INCOMPLETE ORDERS" << std::endl;
     for (auto& i : incomplete) { i.display(os, true); }
   }
@@ -45,8 +46,11 @@ namespace sict {
   bool LineManager::run(std::ostream& os) {
     bool allProcessed{ false };
     size_t numberOfOrders{ waitingQueue.size() };
+    std::string past{};
+    std::string next{};
+    std::string nameProduct{};
     //run this loop until the waitingQueue is empty
-    while (!waitingQueue.empty()) {
+    while (!waitingQueue.empty() || numberOfOrders) {
       //if the waitingQueue is not empty move one item from the
       //front of the waitingQueue to the first station on line
       if (!waitingQueue.empty()) {
@@ -63,31 +67,35 @@ namespace sict {
         if (stations.at(i)->hasAnOrderToRelease()) {
           stations.at(i)->pop(temp);
           if (i != lastStation) {
-            std::string past{stations.at(i)->getName()};
+            past = stations.at(i)->getName();
             index = nextStations.at(i);
-            std::string next{ stations.at(index)->getName() };
-            std::string nameProduct{ temp.getNameProduct() };
-            *(stations.at(index)) += std::move(temp);
-            os << " --> " << nameProduct << " moved from " << past << " to " << next << std::endl;
+            if (index != stations.size()) {
+              next = stations.at(index)->getName();
+              nameProduct = temp.getNameProduct();
+              *(stations.at(index)) += std::move(temp);
+              os << " --> " << nameProduct << " moved from " << past << " to " << next << std::endl;
+            }
           }     //end of if(index != lastStation)
           else {
+            nameProduct = temp.getNameProduct();
+            past = stations.at(i)->getName();
+            os << " --> " << nameProduct << " moved from " << past << " to ";
             if (temp.isFilled()) {
+              os << "Completed Set" << std::endl;
               completed.push_back(std::move(temp));
             }     //end of if(temp.isFilled())
             else {
+              os << "Incomplete Set" << std::endl;
               incomplete.push_back(std::move(temp));
             }     //end of else(temp.isFilled())
+            --numberOfOrders;
           }     //end of else (index != lastStation)
         }       //end of if(stations.at(index)->hasAnOrderToRelease())
-        /*else {
-          index = nextStations.at(index);
-        }*/
       }
     }
-    if (completed.size() + incomplete.size() == numberOfOrders) {
+    if (!numberOfOrders) {
       allProcessed = true;
     }
-    
     return allProcessed;
 
   }

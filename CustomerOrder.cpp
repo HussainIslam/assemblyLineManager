@@ -44,13 +44,13 @@ namespace sict {
           itemArray[i].filledStatus = true;
           itemArray[i].itemSerial = item.getSerialNumber();
           if (item.getQuantity() > 0) --item;
-          os << " Filled " << customerName << '[' << productName << "][" << itemArray[i].itemName << "][" << itemArray[i].itemSerial << ']' << std::endl;;
+          os << " Filled " << customerName << " [" << productName << "][" << itemArray[i].itemName << "][" << itemArray[i].itemSerial << ']' << std::endl;;
         }
         else if (item.getQuantity() > 0 && itemArray[i].filledStatus) {
-          os << " Unable to fill " << customerName << '[' << productName << "][" << itemArray[i].itemName << "][" << itemArray[i].itemSerial << "] already filled" << std::endl;;
+          os << " Unable to fill " << customerName << " [" << productName << "][" << itemArray[i].itemName << "][" << itemArray[i].itemSerial << "] already filled" << std::endl;;
         }
         else {
-          os << " Unable to fill " << customerName << '[' << productName << "][" << itemArray[i].itemName << "][" << itemArray[i].itemSerial << "] out of stock" << std::endl;
+          os << " Unable to fill " << customerName << " [" << productName << "][" << itemArray[i].itemName << "][" << itemArray[i].itemSerial << "] out of stock" << std::endl;
         }
       }
     }
@@ -75,7 +75,7 @@ namespace sict {
   }
 
   std::string CustomerOrder::getNameProduct() const {
-    std::string nameProduct = customerName + '[' + productName + ']';
+    std::string nameProduct = customerName + " [" + productName + ']';
     return nameProduct;
   }
 
@@ -83,21 +83,23 @@ namespace sict {
     if (!showDetail) {
       os.width(utilities.getFieldWidth());
       os << customerName;
-      os << '[' << productName << ']' << std::endl;
+      os << " [" << productName << ']' << std::endl;
       if (numOfItem > 0) {
         for (size_t i = 0; i < numOfItem; i++) {
-          for (size_t i = 0; i < utilities.getFieldWidth(); i++) { os << ' '; }
+          for (size_t i = 0; i < utilities.getFieldWidth()+1; i++) { os << ' '; }
           os << itemArray[i].itemName << std::endl;
         }
       }
     }
     else {
-      os << customerName << '[' << productName << ']' << std::endl;
+      os.width(utilities.getFieldWidth());
+      os << customerName;
+      os << " [" << productName << ']' << std::endl;
       if (numOfItem > 0) {
         for (size_t i = 0; i < numOfItem; i++) {
-          for (size_t i = 0; i < utilities.getFieldWidth(); i++) { os << ' '; }
+          for (size_t i = 0; i < utilities.getFieldWidth()+1; i++) { os << ' '; }
           os << '[' << itemArray[i].itemSerial << "] " << itemArray[i].itemName;
-          os << " - " << itemArray[i].filledStatus << std::endl;
+          os << " - " << (itemArray[i].filledStatus ? "FILLED" : "MISSING") << std::endl;
         }
       }
     }
