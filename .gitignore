@@ -1,31 +1,11 @@
-#codelite
-.clang/
-.codelite/
-Debug/
-
-# Visual Studio
-*.sdf
-*.sln
-*.user
-*.suo
-*.opensdf
-*.opendb
-*.db
-Debug/
-ipch/
-x64/
 .vs/
+Debug/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+ins
+old
+*.docx
+*.pdf
+*.sln
+*.vcxproj
+*.filters
+*.user

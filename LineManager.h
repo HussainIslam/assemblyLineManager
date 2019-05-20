@@ -1,10 +1,3 @@
-/***************************************
-Name: Md. Hussainul Islam Sajib
-Email: mhisajib@myseneca.ca
-Id: 137651170
-Assignment: Project - Milestone 3
-Date: 31 March 2019
-****************************************/
 #ifndef SICT_LINE_MANAGER_H
 #define SICT_LINE_MANAGER_H
 #include <vector>

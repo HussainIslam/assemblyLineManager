@@ -1,11 +1,3 @@
-/***************************************
-Name: Md. Hussainul Islam Sajib
-Email: mhisajib@myseneca.ca
-Id: 137651170
-Assignment: Project - Milestone 2
-Date: 12 March 2019
-****************************************/
-
 #include "Utilities.h"
 
 #ifndef SICT_ITEMSET_H_

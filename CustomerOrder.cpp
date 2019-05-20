@@ -1,10 +1,3 @@
-/***************************************
-Name: Md. Hussainul Islam Sajib
-Email: mhisajib@myseneca.ca
-Id: 137651170
-Assignment: Project - Milestone 3
-Date: 31 March 2019
-****************************************/
 #include "CustomerOrder.h"
 
 namespace sict {
